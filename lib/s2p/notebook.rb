@@ -19,13 +19,32 @@ module S2P
     end
   end
 
+  class Notebook
+    class Component
+      def self.[](*a, **o)
+        new(*a, **o)
+      end
+    end
+  end
+
   class NotebookRunner < Redcarpet::Render::HTML
+    def codespan(code)
+      case code
+      when /^~ /
+        eval(code[/^~ (.*)/, 1], MAIN_BINDING)
+      else
+        eval("puts(#{code})", MAIN_BINDING)
+      end
+
+      ""
+    end
+
     def block_code(text, operation)
       case operation
-      when "ruby"
+      when nil, "ruby"
         eval(text, MAIN_BINDING) # See end of file for this hack.
-      else
-        raise NotImplementedError
+      when "text"
+        puts(text)
       end
 
       ""
