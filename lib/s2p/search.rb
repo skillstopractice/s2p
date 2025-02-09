@@ -173,21 +173,6 @@ module S2P
         end
       end
 
-      def cond_localized_date_range(*ranges)
-        ranges.each do |range|
-          cond_localized_date_range!(*range)
-        end
-      end
-
-      # NOTE: You can use cond_range instead of this method when working with date columns
-      # in the DB as they're zoneless. This method is only necessary when working with
-      # datetime fields, because for those you will need to translate the beginning/end of the
-      # range to the localized beginning/end of day times.
-      def cond_localized_date_range!(start_key, end_key, column)
-        cond(start_key) { |s,v| s.where("#{from.table_name}.#{column} >= ?", PetersenToolbox.to_local_time(Date.parse(v)).beginning_of_day) }
-        cond(end_key) { |s,v| s.where("#{from.table_name}.#{column} <= ?", PetersenToolbox.to_local_time(Date.parse(v)).end_of_day) }
-      end
-
       attr_reader :from
     end
 
