@@ -58,4 +58,24 @@ module S2P
       end
     end
   end
+  
+  module ComponentDebugger
+    def to_html
+      if self.class.const_defined?(:DEBUG_TEMPLATE)
+        t(self.class::DEBUG_TEMPLATE, c: self, x: self.x)
+      else
+        t(DEBUG_TEMPLATE, c: self, x: self.x)
+      end
+    end
+    
+    DEBUG_TEMPLATE = <<-ERB
+      <div class="border border-solid p-3 border-danger">
+        <strong><pre><%= c.class %></pre></strong>
+        
+        <% if c.respond_to?(:debugging_info) %>
+          <pre><%= c.debugging_info.pretty_inspect %></pre>
+        <% end %>
+      </div>
+    ERB
+  end
 end
